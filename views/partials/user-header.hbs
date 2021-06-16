@@ -23,7 +23,7 @@
                 {{/if}}
                 
                 <li class="nav-item">
-                    <a class="nav-link float-right"  style="color: black" href="/cart"><i style="font-size:24px" class="fa">&#xf07a;</i> Cart <span class="badge badge-success" id="cart-count">{{cartCount}}</span></a>
+                    <a class="nav-link float-right"  style="color: black" href="/cart"><i style="font-size:24px" class="fa">&#xf07a;</i> Cart <span class="badge badge-secondary" id="cart-count">{{cartCount}}</span></a>
                 </li>
                 
             </ul>
@@ -35,13 +35,16 @@
         Account
     {{/if}}
   </button>
+
   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
     {{#if user}}
         <a class="dropdown-item" href="/logout">Logout</a>
-        <a href="/myprofile" class="dropdown-item">My Profile</a>
+         <a href="/myprofile" class="dropdown-item">My Profile</a>
+       
         {{else}}
         <a class="dropdown-item" href="/login">Login</a>
     {{/if}}
+    
     
   </div>
 </div>

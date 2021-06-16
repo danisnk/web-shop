@@ -310,5 +310,20 @@ module.exports={
             
         })
 
+    },
+    updateUser:(userId, userDetails)=>{
+        return new Promise((resolve,reject)=>{
+            db.get().collection(collection.USER_COLLECTION).updateOne({_id:objectId(userId)},
+            {
+                $set:{
+                    Name:userDetails.Name,
+                    Email:userDetails.Email,
+                    Mobile:userDetails.Mobile
+                }
+            }).then((response)=>{
+                resolve()
+            })
+        })
+
     }
 }

@@ -5,11 +5,16 @@ const { ObjectId } = require('bson');
 const bcrypt = require('bcrypt')
 module.exports={
     addProduct:(product,callback)=>{
-        console.log(product);
+    
         db.get().collection('product').insertOne(product).then((data)=>{
           
             callback(data.ops[0]._id)
         })
+    },
+    addImage:(productImages,callback)=>{
+        db.get().collection('productImages').insertOne(productImages)
+
+
     },
 
     getAllProducts:()=>{
@@ -19,11 +24,26 @@ module.exports={
         })
 
     },
+    getOneProduct:(proId)=>{
+        return new Promise(async(resolve,reject)=>{
+            let product = await db.get().collection(collection.PRODUCT_COLLECTION).findOne({_id:objectId(proId)})
+            if(product){}
+            resolve(product)
+        })
+
+    },
+    getProductImage:(proId)=>{
+        return new Promise(async(resolve, reject)=>{
+            let productImage = await db.get().collection(collection.PRODUCT_IMAGE_COLLECTION).findOne({product:objectId(proId)})
+            resolve(productImage);
+        })
+
+    },
 
     deleteProducts:(proId)=>{
         return new Promise((resolve, reject)=>{
             db.get().collection(collection.PRODUCT_COLLECTION).removeOne({_id:objectId(proId)}).then((response)=>{
-                console.log(response)
+            
                 resolve(response)
             })
         })
@@ -40,10 +60,14 @@ module.exports={
         return new Promise((resolve,reject)=>{
             db.get().collection(collection.PRODUCT_COLLECTION).updateOne({_id:objectId(proId)},{
                 $set:{
-                    Name:proDetails.Name,
-                    Category:proDetails.Category,
-                    Description:proDetails.Description,
-                    Price:proDetails.Price
+                    name:proDetails.name,
+                    category:proDetails.category,
+                    color:proDetails.color,
+                    model:proDetails.model,
+                    longDescription:proDetails.longDescription,
+                    description:proDetails.description,
+                    price:proDetails.price,
+                    delivery:proDetails.delivery
 
 
                 }
@@ -76,5 +100,19 @@ module.exports={
                     resolve({status:false})
             }
         })
-    }
+    },
+    deleteFiles:(files, callback)=>{
+        var i = files.length;
+        files.forEach(function(filepath){
+          fs.unlink('./public'+ filepath, function(err) {
+            i--;
+            if (err) {
+              callback(err);
+              return;
+            } else if (i <= 0) {
+              callback(null);
+            }
+          });
+        });
+      }
 }

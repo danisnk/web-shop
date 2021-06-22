@@ -11,6 +11,8 @@ var fileUpload = require('express-fileupload')
 var db = require('./config/connection');
 const fetch = require('node-fetch');
 var session = require('express-session')
+const MongoStore = require('connect-mongo');
+
 
 const handlebars = hbs.create({
   extname:"hbs", defaultLayout:'layout',
@@ -18,9 +20,21 @@ const handlebars = hbs.create({
   helpers: {
     eq: function (arg1, arg2, options){
       return arg1 == arg2?true:false;
+    },
+    each_upto: function(ary, max, options) {
+      if(!ary || ary.length == 0)
+        return options.inverse(this);
+
+    var result = [ ];
+    for(var i = 0; i < max && i < ary.length; ++i)
+        result.push(options.fn(ary[i]));
+    return result.join('');
     }
+    
   }
 });
+
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -32,7 +46,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileUpload());
-app.use(session({secret:"Key",cookie:{maxAge:600000}}))
+app.use(
+  session({
+    secret:"Key",
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: "mongodb://localhost:27017/shopping",
+      ttl: 14 * 24 * 60 * 60,
+      autoRemove: 'native'
+    })
+  }))
 db.connect((err)=>{
   if(err) console.log("Connection error"+err);
   else console.log("Database connected to port 27017")

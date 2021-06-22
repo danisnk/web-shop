@@ -70,54 +70,62 @@ router.get('/logout', verifyLogin, (req, res) => {
 })
 
 router.get('/cart', verifyLogin, async (req, res) => {
-  let user = req.session.user._id
+  let user = req.session.user
 
   let products = await userHelpers.getCartProducts(req.session.user._id)
   let totalValue = await userHelpers.getTotalAmount(req.session.user._id)
-  console.log(products)
   res.render('user/cart', { products, user, totalValue })
 })
 router.get('/myprofile', verifyLogin, async (req, res) => {
-  let user = req.session.user._id
+  let userId = req.session.user._id
+  let user = req.session.user
   let userDetails = await userHelpers.getUserDetails(req.session.user._id)
 
-  res.render('user/myprofile', { userDetails,user })
+  res.render('user/myprofile', { userDetails, userId, user })
 })
 
-router.get('/edit-profile', verifyLogin, async(req, res) => {
-  let user = req.session.user._id
+router.get('/edit-profile', verifyLogin, async (req, res) => {
+  let userId = req.session.user._id
+  let user = req.session.user
   let userDetails = await userHelpers.getUserDetails(req.session.user._id)
-  res.render('user/edit-profile',{userDetails,user})
+  res.render('user/edit-profile', { userDetails, userId, user })
 })
 
-router.post('/edit-profile/:id',verifyLogin, (req,res)=>{
- userHelpers.updateUser(req.params.id,req.body).then(()=>{
-   res.redirect('/myprofile')
-   if(req.files.Image)
-   {
-    let id = req.params.id
-    let image = req.files.Image
-    console.log(image)
-    image.mv('./public/profile-images/' + id + '.jpg', (err) => {
-      if (!err) {
-        res.render("/myprofile")
-      } else {
-        console.log(err)
-      }
-    })
-   }
- })
-
-
+router.post('/edit-profile/:id', verifyLogin, (req, res) => {
   
+  userHelpers.updateUser(req.params.id, req.body).then(() => {
+    res.redirect('/myprofile')
+    if (req.files.Image) {
+      let id = req.params.id
+      let image = req.files.Image
+      image.mv('./public/profile-images/' + id + '.jpg', (err) => {
+        if (!err) {
+          res.render("/myprofile")
+        } else {
+          console.log(err)
+        }
+      })
+    }
+  })
+
+
+
 })
 
 router.get('/add-to-cart/:id', verifyLogin, (req, res) => {
-  console.log("api call")
   userHelpers.addToCart(req.params.id, req.session.user._id).then(() => {
     // res.redirect('/')
     res.json({ status: true })
   })
+})
+
+router.get('/product-page/:id', verifyLogin, async (req, res) => {
+  let product = await productHelpers.getOneProduct(req.params.id)
+  let productImage = await productHelpers.getProductImage(req.params.id)
+  let productImageUrls = productImage['productImageUrls']
+  let user = req.session.user
+ 
+  res.render('user/product-page', { product,productImageUrls, user })
 })
 
 router.post('/change-product-quantity/', verifyLogin, (req, res) => {
@@ -164,7 +172,6 @@ router.get('/orders', verifyLogin, async (req, res) => {
 })
 router.get('/view-order-products/:id', verifyLogin, async (req, res) => {
   let products = await userHelpers.getOrderProducts(req.params.id)
-  console.log(products)
   res.render('user/view-order-products', { user: req.session.user, products })
 })
 module.exports = router;

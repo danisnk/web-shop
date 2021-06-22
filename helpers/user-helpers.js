@@ -8,7 +8,7 @@ module.exports={
 
     doSignup:(userData)=>{
         return new Promise(async(resolve,reject)=>{
-             userData.Password =await bcrypt.hash(userData.Password,10)
+             userData.password =await bcrypt.hash(userData.password,10)
              db.get().collection(collection.USER_COLLECTION).insertOne(userData).then((data)=>{
                 resolve(data.ops[0])
              })
@@ -20,10 +20,10 @@ module.exports={
         return new Promise(async(resolve, reject)=>{
             let loginStatus = false
             let response = {}
-            let user = await db.get().collection(collection.USER_COLLECTION).findOne({Email:userData.Email})
+            let user = await db.get().collection(collection.USER_COLLECTION).findOne({email:userData.email})
             if(user)
             {
-                bcrypt.compare(userData.Password,user.Password).then((status)=>{
+                bcrypt.compare(userData.password,user.password).then((status)=>{
                     if(status)
                     {
                         console.log("Login success")
@@ -181,6 +181,7 @@ module.exports={
     },
     getTotalAmount:(userId)=>{
         return new Promise(async(resolve,reject)=>{
+            console.log('[+] USer ID: '+ userId)
             let  total =  await db.get().collection(collection.CART_COLLECTION).aggregate([
                 {
                     $match:{user:objectId(userId)}
@@ -228,7 +229,7 @@ module.exports={
     },
     placeOrder:(order,products,total)=>{
         return new Promise((resolve,reject)=>{
-            console.log(order,products,total)
+            
             let status = order['payment-method']==="COD"?'placed':'placed'
             let orderObj = {
                 deliveryDetails:{
@@ -260,11 +261,11 @@ module.exports={
         })
     },
     getUserOrders:(userId)=>{
-        console.log(userId)
+     
         return new Promise(async(resolve, reject)=>{
             let orders = await db.get().collection(collection.ORDER_COLLECTION)
                 .find({userId:objectId(userId)}).toArray()
-                console.log(orders);
+              
                 resolve(orders)
         })
     },
@@ -299,7 +300,7 @@ module.exports={
                 }
 
             ]).toArray()
-            console.log(orderItems)
+           
             resolve(orderItems)
         })
     },
@@ -318,7 +319,8 @@ module.exports={
                 $set:{
                     Name:userDetails.Name,
                     Email:userDetails.Email,
-                    Mobile:userDetails.Mobile
+                    Mobile:userDetails.Mobile,
+                    Bio:userDetails.Bio
                 }
             }).then((response)=>{
                 resolve()

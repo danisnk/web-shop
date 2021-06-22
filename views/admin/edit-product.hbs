@@ -7,22 +7,34 @@
                 <h2 class="text-cneter">Edit Product</h2>
                 <form action="/admin/edit-product/{{product._id}}" method="POST" enctype="multipart/form-data">
                     <label for="">Name</label>
-                    <input type="text" name="Name" class="form-control" value="{{product.Name}}">
+                    <input type="text" name="name" class="form-control" value="{{product.name}}">
 
                     <label for="">Category</label>
-                    <input type="text" name="Category" class="form-control" value="{{product.Category}}">
+                    <input type="text" name="category" class="form-control" value="{{product.category}}">
+
+                    <label for="">Model</label>
+                    <input type="text" name="model" class="form-control" value="{{product.model}}" >
+
+                    <label for="">Color</label>
+                    <input type="textarea" name="color" class="form-control" value="{{product.color}}">
 
                     <label for="">Description</label>
-                    <input type="text" name="Description" class="form-control" value="{{product.Description}}">
+                    <input type="text" name="description" class="form-control" value="{{product.description}}">
+
+                    <label for="">Long Description</label>
+                    <input type="textarea" name="longDescription" class="form-control" value="{{product.longDescription}}">
+
+                    <label for="">Delivery</label>
+                    <input type="text" name="delivery" class="form-control" value="{{product.delivery}}">
 
                     <label for="">Price</label>
-                    <input type="texts" name="Price" class="form-control" value={{product.Price}}>
+                    <input type="texts" name="price" class="form-control" value={{product.price}}>
 
                     <label for="">Image</label>
                     <img src="/product-images/{{product._id}}.jpg" alt="" style="width: 100px" id="imgView" class="pt-3">
-                    <input type="file" class="form-control" name="Image" onchange="viewImage(event)">
+                    <input type="file" class="form-control" name="image" onchange="viewImage(event)">
 
-                    <button type="submit" class="btn btn-success mt-4" onclick="return confirm('Do you want to edit {{product.Name}}')">Edit</button>
+                    <button type="submit" class="btn btn-success mt-4" onclick="return confirm('Do you want to edit {{product.name}}')">Edit</button>
                 </form>
             </div>
         </div>

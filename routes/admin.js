@@ -4,6 +4,7 @@ const productHelpers = require('../helpers/product-helpers');
 var router = express.Router();
 var productHelper = require('../helpers/product-helpers')
 const fs = require('fs')
+const { nanoid } = require('nanoid')
 const verifyLogin = (req, res, next) => {
   if (req.session.adminLoggedIn) {
     next()
@@ -51,36 +52,67 @@ router.get('/add-product', function (req, res) {
   res.render('admin/add-product')
 })
 router.post("/add-product", function (req, res) {
-  productHelpers.addProduct(req.body, (id) => {
-    let image = req.files.Image
-    console.log(image)
-    image.mv('./public/product-images/' + id + '.jpg', (err) => {
-      if (!err) {
-        res.render("admin/add-product")
-      } else {
-        console.log(err)
+  productHelpers.addProduct(req.body, (proId) => {
+
+    if (req.files) {
+
+      const file = req.files.image;
+      var productImages = {
+        product: proId,
+        productImageUrls: []
       }
-    })
+
+      for (let i = 0; i < file.length; i++) {
+
+        var random = nanoid();
+        url = "/product-images/" + random + ".jpg";
+        productImages.productImageUrls.push(url)
+        file[1].mv("./public/product-images/" + proId + ".jpg")
+        file[i].mv("./public" + url, function (err) {
+
+          if (err) {
+
+            res.send(err);
+
+          }
+        })
+
+      }
+      productHelpers.addImage(productImages)
+      res.send('files uploaded');
+
+    }
   })
 
 
 
 });
-router.get('/delete-product/:id', (req, res) => {
+router.get('/delete-product/:id', async (req, res) => {
   let proId = req.params.id
+  let productImage = await productHelpers.getProductImage(proId)
+  let files = productImage['productImageUrls']
   productHelpers.deleteProducts(proId).then((response) => {
     if (response) {
-      fs.unlink('./public/product-images/' + proId + '.jpg', () => {
-        res.redirect('/admin')
-      })
+      
+      try {
+        files.forEach(path => fs.existsSync('./public'+ path) && fs.unlinkSync('./public'+ path))
+        fs.unlink('./public/product-images/'+proId+'.jpg', function(){
+          res.redirect('/admin')
+
+        }
+        
+        )} catch (err) {
+        // error handling here
+        console.error(err)
+      }
 
     }
+
   })
 
 })
 router.get('/edit-product/:id', async (req, res) => {
   let product = await productHelpers.getProductDetails(req.params.id)
-  console.log(product)
   res.render('admin/edit-product', { product })
 })
 router.post('/edit-product/:id', (req, res) => {

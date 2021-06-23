@@ -5,15 +5,15 @@
             <div class="row">
                 {{#each products}}
                 <div class="col-md-3 p-3 d-flex justify-content-center justify-content-md-start">
-                    <div class="card " style="width: 16rem; height:25rem">
+                    <div class="card " style="width: 16rem">
                         <img class="card-img-top"
                             src="/product-images/{{this._id}}.jpg"
                             alt="Card image cap"
-                            style="height:11rem;">
+                            style="height:15rem;">
                         <div class="card-body">
-                            <h5 class="card-title">{{this.Name}}</h5>
-                            <p class="card-text">₹  {{this.Price}}</p>
-                            <p class="card-text">{{this.Description}}</p>
+                            <h5 class="card-title">{{this.name}}</h5>
+                            <p class="card-text">₹  {{this.price}}</p>
+                            <p class="card-text">{{this.description}}</p>
                             <button onclick="addToCart('{{this._id}}')" class="button is-info">Add to cart</button>
                             <a href="/product-page/{{this._id}}"  >View Product</a>
                         </div>

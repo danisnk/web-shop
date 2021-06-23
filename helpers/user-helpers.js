@@ -181,7 +181,6 @@ module.exports={
     },
     getTotalAmount:(userId)=>{
         return new Promise(async(resolve,reject)=>{
-            console.log('[+] USer ID: '+ userId)
             let  total =  await db.get().collection(collection.CART_COLLECTION).aggregate([
                 {
                     $match:{user:objectId(userId)}
@@ -212,7 +211,7 @@ module.exports={
                 {
                     $group:{
                         _id:null,
-                        total:{$sum:{$multiply:[{ $toInt: '$quantity' },{ $toInt: '$product.Price' }]}}
+                        total:{$sum:{$multiply:[{ $toInt: '$quantity' },{ $toInt: '$product.price' }]}}
                         
                     }
                 }

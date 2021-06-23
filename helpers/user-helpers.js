@@ -316,10 +316,10 @@ module.exports={
             db.get().collection(collection.USER_COLLECTION).updateOne({_id:objectId(userId)},
             {
                 $set:{
-                    Name:userDetails.Name,
-                    Email:userDetails.Email,
-                    Mobile:userDetails.Mobile,
-                    Bio:userDetails.Bio
+                    name:userDetails.name,
+                    email:userDetails.email,
+                    mobile:userDetails.mobile,
+                    bio:userDetails.bio
                 }
             }).then((response)=>{
                 resolve()

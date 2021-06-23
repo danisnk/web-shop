@@ -93,12 +93,14 @@ router.get('/edit-profile', verifyLogin, async (req, res) => {
 })
 
 router.post('/edit-profile/:id', verifyLogin, (req, res) => {
+  let id = req.params.id
   
   userHelpers.updateUser(req.params.id, req.body).then(() => {
     res.redirect('/myprofile')
-    if (req.files.Image) {
-      let id = req.params.id
-      let image = req.files.Image
+    if (req.files.image) {
+      console.log("blaaa")
+      let image = req.files.image
+      console.log(id)
       image.mv('./public/profile-images/' + id + '.jpg', (err) => {
         if (!err) {
           res.render("/myprofile")
@@ -168,7 +170,6 @@ router.get('/order-success', verifyLogin, (req, res) => {
 })
 router.get('/orders', verifyLogin, async (req, res) => {
   let orders = await userHelpers.getUserOrders(req.session.user._id)
-  console.log(orders)
   res.render('user/orders', { user: req.session.user, orders })
 })
 router.get('/view-order-products/:id', verifyLogin, async (req, res) => {
